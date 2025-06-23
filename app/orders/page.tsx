@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+export const fetchCache = "no-store";
 import { supabase } from '../../lib/supabaseClient';
 import OrdersDataGrid from '../../components/OrdersDataGrid';
 
