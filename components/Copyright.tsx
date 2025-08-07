@@ -5,6 +5,12 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 
 export default function Copyright(props: any) {
+  const [currentYear, setCurrentYear] = React.useState<string>('');
+
+  React.useEffect(() => {
+    setCurrentYear(new Date().getFullYear().toString());
+  }, []);
+
   return (
     <Typography
       variant="body2"
@@ -21,7 +27,7 @@ export default function Copyright(props: any) {
       <Link color="inherit" href="https://mui.com/">
         Sitemark
       </Link>{' '}
-      {new Date().getFullYear()}
+      {currentYear}
       {'.'}
     </Typography>
   );

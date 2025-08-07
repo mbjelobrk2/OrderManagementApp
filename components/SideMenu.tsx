@@ -44,7 +44,7 @@ export default function SideMenu() {
           p: 1.5,
         }}
       >
-        <SelectContent />
+        {/*<SelectContent />*/}
       </Box>
       <Divider />
       <Box
@@ -56,7 +56,7 @@ export default function SideMenu() {
         }}
       >
         <MenuContent />
-        <CardAlert />
+        {/*<CardAlert />*/}
       </Box>
       <Stack
         direction="row"
@@ -70,16 +70,16 @@ export default function SideMenu() {
       >
         <Avatar
           sizes="small"
-          alt="Riley Carter"
+          alt="Mika Bjelobrk"
           src="/static/images/avatar/7.jpg"
           sx={{ width: 36, height: 36 }}
         />
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            Riley Carter
+            Mika Bjelobrk
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            riley@email.com
+            mikabjelobrk@email.com
           </Typography>
         </Box>
         <OptionsMenu />

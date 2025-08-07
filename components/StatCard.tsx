@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -8,6 +6,8 @@ import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
+import { areaElementClasses } from '@mui/x-charts/LineChart';
 
 export type StatCardProps = {
   title: string;
@@ -17,38 +17,29 @@ export type StatCardProps = {
   data: number[];
 };
 
-function SimpleSparkLine({ data, color }: { data: number[]; color: string }) {
-  const maxValue = Math.max(...data);
-  const minValue = Math.min(...data);
-  const range = maxValue - minValue;
-  
-  const points = data.map((value, index) => {
-    const x = (index / (data.length - 1)) * 100;
-    const y = 100 - ((value - minValue) / range) * 80; // 80% height, 10% padding top/bottom
-    return `${x},${y}`;
-  }).join(' ');
+function getDaysInMonth(month: number, year: number) {
+  const date = new Date(year, month, 0);
+  const monthName = date.toLocaleDateString('en-US', {
+    month: 'short',
+  });
+  const daysInMonth = date.getDate();
+  const days: string[] = [];
+  let i = 1;
+  while (days.length < daysInMonth) {
+    days.push(`${monthName} ${i}`);
+    i += 1;
+  }
+  return days;
+}
 
+function AreaGradient({ color, id }: { color: string; id: string }) {
   return (
-    <svg width="100%" height="50" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id={`gradient-${color}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={color} stopOpacity={0.3} />
-          <stop offset="100%" stopColor={color} stopOpacity={0} />
-        </linearGradient>
-      </defs>
-      <polygon
-        points={`0,100 ${points} 100,100`}
-        fill={`url(#gradient-${color})`}
-      />
-      <polyline
-        points={points}
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <defs>
+      <linearGradient id={id} x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+        <stop offset="100%" stopColor={color} stopOpacity={0} />
+      </linearGradient>
+    </defs>
   );
 }
 
@@ -60,6 +51,7 @@ export default function StatCard({
   data,
 }: StatCardProps) {
   const theme = useTheme();
+  const daysInWeek = getDaysInMonth(4, 2024);
 
   const trendColors = {
     up:
@@ -111,7 +103,24 @@ export default function StatCard({
             </Typography>
           </Stack>
           <Box sx={{ width: '100%', height: 50 }}>
-            <SimpleSparkLine data={data} color={chartColor} />
+            <SparkLineChart
+              color={chartColor}
+              data={data}
+              area
+              showHighlight
+              showTooltip
+              xAxis={{
+                scaleType: 'band',
+                data: daysInWeek, // Use the correct property 'data' for xAxis
+              }}
+              sx={{
+                [`& .${areaElementClasses.root}`]: {
+                  fill: `url(#area-gradient-${value})`,
+                },
+              }}
+            >
+              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
+            </SparkLineChart>
           </Box>
         </Stack>
       </CardContent>

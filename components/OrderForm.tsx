@@ -6,6 +6,9 @@ import toast, { Toaster } from 'react-hot-toast'
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useState, useEffect } from "react";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface IFormInput {
     naziv_proizvoda: string
@@ -16,12 +19,25 @@ interface IFormInput {
     adresa_isporuke: string
 }
 
-
 export default function App() {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const { register, handleSubmit, formState: { errors }, reset } = useForm<IFormInput>()
   const router = useRouter();
+  
+  // Auto-redirect after success message
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        router.push('/orders');
+      }, 2000); // 2 seconds delay
+      
+      return () => clearTimeout(timer);
+    }
+  }, [success, router]);
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
+      setLoading(true);
       const formData = new FormData();
       formData.append('naziv_proizvoda', data.naziv_proizvoda);
       formData.append('kupac', data.kupac);
@@ -33,26 +49,27 @@ export default function App() {
       const result = await createOrderAsync(formData);
       
       if (result.success) {
-        toast.success('Narudžba uspješno kreirana!');
         reset(); // Clear the form
+        setSuccess(true);
       } else {
         toast.error(`Greška: ${result.error}`);
       }
     } catch (error) {
       toast.error('Došlo je do greške prilikom kreiranja narudžbe');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="form-container" style={{position: "relative"}}>
-      <IconButton
-        onClick={() => router.push('/orders')}
-        style={{ position: "absolute", top: 8, right: 8 }}
-        aria-label="Go back"
-      >
-        <ArrowBackIcon />
-      </IconButton>
-      <Toaster position="top-right" />
+            <Toaster position="top-right" />
+      {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
+        </div>
+      )}
+      {!success ? (
       <div className="form-box">
         <h2>Nova narudžba</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -128,7 +145,14 @@ export default function App() {
           </button>
         </form>
       </div>
-
+             ) : ( 
+         <div className="success-message">
+           <div className="success-icon">
+             <CheckCircleIcon />
+           </div>
+           <h2>Narudžba uspješno kreirana!</h2>
+         </div>
+       )}
       <style jsx>{`
         .form-container {
           min-height: 100vh;
@@ -220,6 +244,95 @@ export default function App() {
           pointer-events: none;
           font-size: 1rem;
         }
+        .loading-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 9999;
+          background-color: rgba(255, 255, 255, 0.7);
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+                 .success-message {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           justify-content: center;
+           background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+           padding: 3rem 2rem;
+           border-radius: 1rem;
+           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+           width: 100%;
+           max-width: 32rem;
+           text-align: center;
+           border: 2px solid #16a34a;
+           animation: successFadeIn 0.6s ease-out;
+         }
+
+         .success-icon {
+           margin-bottom: 1.5rem;
+           animation: iconBounce 0.8s ease-out 0.2s both;
+         }
+
+         .success-icon svg {
+           font-size: 4rem;
+           color: #16a34a;
+           filter: drop-shadow(0 2px 4px rgba(22, 163, 74, 0.3));
+         }
+
+         .success-message h2 {
+           color: #16a34a;
+           font-size: 1.5rem;
+           font-weight: 700;
+           margin-bottom: 0.5rem;
+           animation: textSlideUp 0.6s ease-out 0.4s both;
+         }
+
+         .success-message p {
+           color: #6b7280;
+           font-size: 0.875rem;
+           margin: 0;
+           animation: textSlideUp 0.6s ease-out 0.6s both;
+         }
+
+         @keyframes successFadeIn {
+           from {
+             opacity: 0;
+             transform: scale(0.9) translateY(20px);
+           }
+           to {
+             opacity: 1;
+             transform: scale(1) translateY(0);
+           }
+         }
+
+         @keyframes iconBounce {
+           0% {
+             transform: scale(0) rotate(-180deg);
+             opacity: 0;
+           }
+           50% {
+             transform: scale(1.2) rotate(-90deg);
+           }
+           100% {
+             transform: scale(1) rotate(0deg);
+             opacity: 1;
+           }
+         }
+
+         @keyframes textSlideUp {
+           from {
+             opacity: 0;
+             transform: translateY(10px);
+           }
+           to {
+             opacity: 1;
+             transform: translateY(0);
+           }
+         }
       `}</style>
     </div>
   )

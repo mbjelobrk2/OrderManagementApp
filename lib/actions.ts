@@ -20,6 +20,11 @@ export async function fetchOrdersAsync() {
   if (error) throw error
   return data
 }
+export async function getOrdersByIdAsync(ids:number[]){
+  const rez = await fetchOrdersAsync();
+  const orders = rez.filter(order => ids.includes(order.id));
+  return orders
+}
 export async function createOrderAsync(formData: FormData) {
     try {
       const orderData = {

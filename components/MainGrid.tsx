@@ -16,7 +16,7 @@ import OrdersDataGrid from '../components/OrdersDataGrid';
 
 const data: StatCardProps[] = [
   {
-    title: 'Korisnici',
+    title: 'Broj narudžbi',
     value: '14k',
     interval: 'Posljednjih 30 dana',
     trend: 'up',
@@ -26,17 +26,17 @@ const data: StatCardProps[] = [
     ],
   },
   {
-    title: 'Konverzije',
+    title: 'Kupci',
     value: '325',
     interval: 'Posljednjih 30 dana',
-    trend: 'down',
+    trend: 'up',
     data: [
-      1640, 1250, 970, 1130, 1050, 900, 720, 1080, 900, 450, 920, 820, 840, 600, 820,
-      780, 800, 760, 380, 740, 660, 620, 840, 500, 520, 480, 400, 360, 300, 220,
+      220, 300, 360, 400, 480, 520, 500, 840, 620, 660, 740, 380, 760, 800, 780, 820,
+      600, 840, 820, 920, 450, 900, 1080, 720, 900, 1050, 1130, 970, 1250, 1640
     ],
   },
   {
-    title: 'Broj događaja',
+    title: 'Ukupni prihod',
     value: '200k',
     interval: 'Posljednjih 30 dana',
     trend: 'neutral',
@@ -52,7 +52,7 @@ export default function MainGrid({narudzbe}) {
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       {/* cards */}
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Pregled
+        Statistike
       </Typography>
       <Grid
         container
@@ -66,28 +66,27 @@ export default function MainGrid({narudzbe}) {
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard />
+          <HighlightedCard narudzbe={narudzbe || []}/>
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+      {/*  <Grid size={{ xs: 12, md: 6 }}>
           <SessionsChart />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <PageViewsBarChart />
         </Grid>
+        */}
       </Grid>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Detalji
+        Narudžbe
       </Typography>
-      <Grid container spacing={2} columns={12}>
+      <Grid container spacing={2} columns={8}>
         <Grid size={{ xs: 12, lg: 9 }}>
           <OrdersDataGrid narudzbe={narudzbe || []} />
         </Grid>
-        <Grid size={{ xs: 12, lg: 3 }}>
-          <Stack gap={2} direction={{ xs: 'column', sm: 'row', lg: 'column' }}>
-            <CustomizedTreeView />
-            <ChartUserByCountry />
+        {/*<Grid size={{ xs: 12, lg: 3 }}>
+           <Stack gap={2} direction={{ xs: 'column', sm: 'row', lg: 'column' }}>
           </Stack>
-        </Grid>
+        </Grid>*/}
       </Grid>
       <Copyright sx={{ my: 4 }} />
     </Box>

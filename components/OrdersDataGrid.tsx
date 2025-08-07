@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Checkbox } from "@mui/material";
 import { deleteOrder } from "../lib/actions";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import ConfirmDelete from "./ConfirmDelete";
 import EditForm from "./EditForm";
 
@@ -44,14 +44,12 @@ export default function OrdersDataGrid({ narudzbe }: OrdersDataGridProps) {
 
     const handleDeleteSelected = async () => {
         try {
-        await deleteOrder(selectedIds);
-        setSelectedIds([]);
-        setShowModal(false);
-        router.refresh();
-        toast.success('Odabrane narudžbe uspješno izbrisane!');
-    } catch (error) {
-        toast.error('Došlo je do greške prilikom brisanja narudžbi!');
-    }
+            await deleteOrder(selectedIds);
+            setSelectedIds([]);
+            router.refresh();
+        } catch (error) {
+            throw error; // Re-throw to be handled by ConfirmDelete
+        }
     };
     const columns: GridColDef[] = [
         {
@@ -69,31 +67,32 @@ export default function OrdersDataGrid({ narudzbe }: OrdersDataGridProps) {
               />
             ),
           },
-        { field: "id", headerName: "ID", width: 90 },
-        { field: "naziv_proizvoda", headerName: "Naziv proizvoda", width: 200 },
-        { field: "kupac", headerName: "Kupac", width: 200 },
-        { field: "kolicina", headerName: "Količina", width: 100, type: "number" },
+        { field: "id", headerName: "ID", width: 60 },
+        { field: "naziv_proizvoda", headerName: "Naziv proizvoda", width: 170 },
+        { field: "kupac", headerName: "Kupac", width: 120 },
+        { field: "kolicina", headerName: "Količina", width: 85, },
         {
             field: "cijena_po_komadu",
             headerName: "Cijena/kom",
-            width: 130,
+            width: 90,
             renderCell: (params) => <span>{params.value} KM</span>
         },
-        { field: "status_narudzbe", headerName: "Status", width: 130, },
+        { field: "status_narudzbe", headerName: "Status", width: 115, },
         {
             field: "datum_kreiranja",
             headerName: "Datum kreiranja",
-            width: 200,
+            width: 140,
             valueFormatter: (params: any) => {
                 return params.value?.substring(0, 10);
             }
         },
-        { field: "adresa_isporuke", headerName: "Adresa isporuke", width: 300 },
+        { field: "adresa_isporuke", headerName: "Adresa isporuke", width: 170 },
     ];
 
 
     return (
         <div style={{ height: 600, width: "100%" }}>
+            <Toaster position="top-right" />
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10, gap: 8 }}>
                 <Button variant="contained" color="primary" onClick={() => router.push('/orders/create')}>
                     Dodaj narudžbu

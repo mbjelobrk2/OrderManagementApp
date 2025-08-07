@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 interface IFormInput {
     naziv_proizvoda: string
     kupac: string
@@ -21,7 +22,7 @@ export default function App({showEditForm, ids, onClose}) {
   const { register, handleSubmit, formState: { errors }, reset} = useForm<IFormInput>()
   const router = useRouter();
   const [selectedOrderId, setSelectedOrderId] = useState<number | "">("");
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (ids && ids.length > 0) {
       setSelectedOrderId(ids[0]);
@@ -42,6 +43,7 @@ export default function App({showEditForm, ids, onClose}) {
     }
   }, [selectedOrderId,reset]);
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    setIsLoading(true);
     try {
       const formData = new FormData();
       formData.append('naziv_proizvoda', data.naziv_proizvoda);
@@ -61,6 +63,8 @@ export default function App({showEditForm, ids, onClose}) {
       }
     } catch (error) {
       toast.error('Došlo je do greške prilikom kreiranja narudžbe');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,6 +73,23 @@ export default function App({showEditForm, ids, onClose}) {
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
+      {isLoading && (
+                    <div className="loading-overlay">
+                        <div className="loading-container">
+                            <CircularProgress 
+                                size={60}
+                                thickness={4}
+                                sx={{
+                                    color: '#16a34a',
+                                    '& .MuiCircularProgress-circle': {
+                                        strokeLinecap: 'round',
+                                    },
+                                }}
+                            />
+                            <p className="loading-text">Izmjena narudžbe...</p>
+                        </div>
+                    </div>
+                )}
         <button
           style={{ position: "absolute", top: 2, right: 2, background: "none", border: "none", fontSize: "1.5rem", cursor: "pointer", lineHeight: 1 }}
           onClick={onClose}
@@ -179,8 +200,8 @@ export default function App({showEditForm, ids, onClose}) {
             {errors.adresa_isporuke && <span className="error">{errors.adresa_isporuke.message}</span>}
           </div>
 
-          <button type="submit" className="submit-button">
-            Izmijeni narudžbu
+          <button type="submit" className="submit-button" disabled={isLoading}>
+            {isLoading ? "Učitavanje..." : "Izmijeni narudžbu"}
           </button>
         </form>
       </div>
@@ -204,6 +225,30 @@ export default function App({showEditForm, ids, onClose}) {
           max-height: 95vh;
           overflow-y: auto;
           box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .loading-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(255, 255, 255, 0.9);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1001;
+          border-radius: 8px;
+        }
+        .loading-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+        .loading-text {
+          margin: 0;
+          color: #16a34a;
+          font-weight: 500;
         }
         .form-group {
           margin-bottom: 1rem;
