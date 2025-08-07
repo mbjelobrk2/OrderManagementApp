@@ -1,4 +1,4 @@
-import { fetchOrdersAsync } from "../../../lib/actions";
+/*import { fetchOrdersAsync } from "../../../lib/actions";
 import { generateLLMInsights } from "../../../lib/insightHelper";
 import { notFound } from "next/navigation";
 
@@ -19,4 +19,4 @@ export default async function InsightsPage() {
       </pre>
     </main>
   );
-}
+}*/
