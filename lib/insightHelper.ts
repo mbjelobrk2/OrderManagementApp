@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+/*import OpenAI from 'openai';
 import { Order } from './actions';
 export async function generateLLMInsights(orders: Order[]): Promise<string> {
   const content = orders
@@ -19,4 +19,4 @@ ${content}`;
   });
 
   return completion.choices[0]?.message?.content ?? "Nema uvida.";
-}
+}*/
