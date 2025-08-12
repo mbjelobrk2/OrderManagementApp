@@ -66,7 +66,7 @@ export default function MainGrid({narudzbe}) {
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard narudzbe={narudzbe || []}/>
+          <HighlightedCard narudzbe={narudzbe}/>
         </Grid>
       {/*  <Grid size={{ xs: 12, md: 6 }}>
           <SessionsChart />
