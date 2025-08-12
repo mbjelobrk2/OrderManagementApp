@@ -13,6 +13,7 @@ import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import MenuButton from '../components/MenuButton';
 import ColorModeIconDropdown from '../components/ColorModeIconDropdown';
 
+
 const Toolbar = styled(MuiToolbar)({
   width: '100%',
   padding: '12px',
