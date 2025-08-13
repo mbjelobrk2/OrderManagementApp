@@ -1,9 +1,11 @@
 'use client';
 
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress'; // ⬅️ import loading spinner
 import AppNavbar from './AppNavbar';
 import Header from './Header';
 import MainGrid from './MainGrid';
@@ -14,6 +16,33 @@ interface DashboardWrapperProps {
 }
 
 export default function DashboardWrapper({ narudzbe }: DashboardWrapperProps) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // 5 seconds delay
+
+    return () => clearTimeout(timeout); // Clean up
+  }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          height: '100vh',
+          width: '100vw',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'background.default',
+        }}
+      >
+        <CircularProgress size={80} />
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
       <SideMenu />
@@ -46,4 +75,4 @@ export default function DashboardWrapper({ narudzbe }: DashboardWrapperProps) {
       </Box>
     </Box>
   );
-} 
+}
