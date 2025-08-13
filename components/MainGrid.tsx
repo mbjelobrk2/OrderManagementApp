@@ -89,7 +89,7 @@ export default function MainGrid({narudzbe}) {
         xAxisLabels: orderDates,
       },
       {
-        title: 'Kupci',
+        title: 'Broj kupaca',
         value: `${totalUniqueCustomers}`,
         interval: 'Od prvog kupca',
         trend: calculateTrend(uniqueCustomers),
