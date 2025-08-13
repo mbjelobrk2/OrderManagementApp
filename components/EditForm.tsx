@@ -122,7 +122,7 @@ export default function App({showEditForm, ids, onClose}) {
               id="naziv_proizvoda" 
               {...register("naziv_proizvoda", { 
                 required: "Naziv proizvoda je obavezan",
-                maxLength: { value: 20, message: "Maksimalna dužina je 20 znakova" }
+                maxLength: { value: 40, message: "Maksimalna dužina je 20 znakova" }
               })} 
             />
             {errors.naziv_proizvoda && <span className="error">{errors.naziv_proizvoda.message}</span>}
@@ -158,14 +158,21 @@ export default function App({showEditForm, ids, onClose}) {
           <div className="form-group">
             <label htmlFor="cijena_po_komadu">Cijena po komadu:</label>
             <div className="input-with-suffix">
-              <input 
-                id="cijena_po_komadu" 
-                type="number" 
-                {...register("cijena_po_komadu", { 
-                  required: "Cijena je obavezna",
-                  min: { value: 1, message: "Minimalna cijena je 1" }
-                })} 
-              />
+            <input
+  id="cijena_po_komadu"
+  type="number"
+  step="0.01"
+  inputMode="decimal"
+  {...register("cijena_po_komadu", {
+    valueAsNumber: true,
+    required: "Cijena je obavezna",
+    min: { value: 1, message: "Minimalna cijena je 1" }
+  })}
+  onChange={(e) => {
+    const val = e.target.value.replace(",", ".");
+    e.target.value = val;
+  }}
+/>
               <span className="input-suffix">KM</span>
             </div>
             {errors.cijena_po_komadu && <span className="error">{errors.cijena_po_komadu.message}</span>}
@@ -194,7 +201,7 @@ export default function App({showEditForm, ids, onClose}) {
               id="adresa_isporuke" 
               {...register("adresa_isporuke", { 
                 required: "Adresa isporuke je obavezna",
-                maxLength: { value: 20, message: "Maksimalna dužina je 20 znakova" }
+                maxLength: { value: 40, message: "Maksimalna dužina je 20 znakova" }
               })} 
             />
             {errors.adresa_isporuke && <span className="error">{errors.adresa_isporuke.message}</span>}
