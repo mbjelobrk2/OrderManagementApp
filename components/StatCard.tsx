@@ -15,6 +15,7 @@ export type StatCardProps = {
   interval: string;
   trend: 'up' | 'down' | 'neutral';
   data: number[];
+  xAxisLabels: string[];
 };
 
 function getDaysInMonth(month: number, year: number) {
@@ -30,6 +31,50 @@ function getDaysInMonth(month: number, year: number) {
     i += 1;
   }
   return days;
+}
+
+// This function processes `narudzbe` into useful data for charts
+function processOrdersData(orders: any[]) {
+  const ordersByDate: { [key: string]: number } = {};
+  const revenueByDate: { [key: string]: number } = {};
+  const uniqueCustomersByDate: { [key: string]: Set<string> } = {};
+
+  orders.forEach((order) => {
+    const orderDate = new Date(order.datum_kreiranja).toLocaleDateString('en-US');
+    if (!ordersByDate[orderDate]) {
+      ordersByDate[orderDate] = 0;
+      revenueByDate[orderDate] = 0;
+      uniqueCustomersByDate[orderDate] = new Set();
+    }
+
+    ordersByDate[orderDate] += 1;
+    revenueByDate[orderDate] += order.cijena_po_komadu * order.kolicina;
+    uniqueCustomersByDate[orderDate].add(order.kupac);
+  });
+
+  const orderDates = Object.keys(ordersByDate).sort(); // Sort dates
+
+  const orderCounts = orderDates.map((date) => ordersByDate[date]);
+  const revenues = orderDates.map((date) => revenueByDate[date]);
+  const uniqueCustomers = orderDates.map((date) => uniqueCustomersByDate[date].size);
+
+  return {
+    orderCounts,
+    revenues,
+    uniqueCustomers,
+    orderDates,
+  };
+}
+
+function calculateTrend(data: number[]): 'up' | 'down' | 'neutral' {
+  if (data.length < 2) return 'neutral';
+
+  const latest = data[data.length - 1];
+  const previous = data[data.length - 2];
+
+  if (latest > previous) return 'up';
+  if (latest < previous) return 'down';
+  return 'neutral';
 }
 
 function AreaGradient({ color, id }: { color: string; id: string }) {
@@ -49,9 +94,9 @@ export default function StatCard({
   interval,
   trend,
   data,
+  xAxisLabels,
 }: StatCardProps) {
   const theme = useTheme();
-  const daysInWeek = getDaysInMonth(4, 2024);
 
   const trendColors = {
     up:
@@ -84,19 +129,12 @@ export default function StatCard({
         <Typography component="h2" variant="subtitle2" gutterBottom>
           {title}
         </Typography>
-        <Stack
-          direction="column"
-          sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}
-        >
+        <Stack direction="column" sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}>
           <Stack sx={{ justifyContent: 'space-between' }}>
-            <Stack
-              direction="row"
-              sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-            >
-              <Typography variant="h4" component="p">
+            <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="h4" component="p" sx={{width:"50%"}}>
                 {value}
               </Typography>
-              <Chip size="small" color={color} label={trendValues[trend]} />
             </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {interval}
@@ -111,7 +149,7 @@ export default function StatCard({
               showTooltip
               xAxis={{
                 scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
+                data: xAxisLabels, // Use the dates here
               }}
               sx={{
                 [`& .${areaElementClasses.root}`]: {

@@ -16,7 +16,6 @@ import { error } from 'console';
 
 export default function HighlightedCard({narudzbe}) {
   const theme = useTheme();
-  console.log(narudzbe);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [openInsightsModal,setOpenInsightsModal] = useState(false);
   const [loading,setLoading] = useState(false);
@@ -45,10 +44,10 @@ export default function HighlightedCard({narudzbe}) {
           gutterBottom
           sx={{ fontWeight: '600' }}
         >
-          Explore your data
+          Sumarizacija podataka
         </Typography>
         <Typography sx={{ color: 'text.secondary', mb: '8px' }}>
-          Uncover performance and visitor insights with our data wizardry.
+          Mogućnost generisanja detaljnog uvida u podatke o korisničkim narudžbama 
         </Typography>
         <Button variant="contained"
           onClick={() => handleOpen()}
@@ -57,7 +56,7 @@ export default function HighlightedCard({narudzbe}) {
           endIcon={<ChevronRightRoundedIcon />}
           fullWidth={isSmallScreen}
         >
-          Get insights
+          Uvid u narudžbe
         </Button>
       </CardContent>
     <InsightsModal 
