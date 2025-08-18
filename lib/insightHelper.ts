@@ -15,9 +15,10 @@ export async function generateLLMInsights(orders): Promise<string> {
         `Kupac: ${o.kupac}, Proizvod: ${o.naziv_proizvoda}, Količina: ${o.kolicina}, Cijena po komadu: ${o.cijena_po_komadu}, Status narudzbe: ${o.status_narudzbe}, Adresa isporuke: ${o.adresa_isporuke}`
     )
     .join("\n");
-  const prompt = `Na osnovu sljedećih narudžbi generiši analitički uvid na bosanskom jeziku. Analiza treba sadržavati broj narudžbi koji odgovara broju redova, ukupan prihod, i eventualne zaključke (npr. najčešći proizvodi, veliki kupci, itd):
+  const prompt = `Ti si AI asistent koji odgovara isključivo na bosanskom jeziku. 
+Nikada nemoj koristiti engleski. Izgenerisati statistike na osnovu sljedećih narudžbi na bosanskom jeziku:
 
-${content}. U analizi NE SMIJE BITI ništa na engleskom jeziku. Ukoliko ni jedna narudžba nije poslana generiši poruku: Trenutno nema dostupnih narudžbi.`;
+${content}. Ukoliko ni jedna narudžba nije poslana generiši poruku: Trenutno nema dostupnih narudžbi.`;
 
   console.log(prompt);
   const groq = new Groq({ apiKey:process.env.GROQ_API_KEY })
